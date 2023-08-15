@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import "react-toastify/dist/ReactToastify.css";
 import localFont from "@next/font/local";
-import { useSlotMachineStyles } from "./SlotMachine.style";
+import { useSlotMachineStyles } from "../components/SlotMachine.style";
 import { useEffect, useState } from "react";
 
 const poppins = localFont({
