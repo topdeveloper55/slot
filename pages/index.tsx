@@ -239,9 +239,6 @@ export default function Home() {
           <img className="ml-[-20px] h-4/5" src="/sound.png" />
         </button>
       </div>
-      <div className="flex fixed top-[7px] left-[700px] text-[20px] text-white z-10">
-        Mastech Wireless Tech Pvt LTD
-      </div>
       <div className="flex fixed top-[7rem] left-10 z-10">
         <button>
           <img src="/info.png" className="h-4/5" />
