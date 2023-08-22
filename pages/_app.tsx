@@ -1,37 +1,21 @@
 import React from 'react'
 import 'tailwindcss/tailwind.css'
-import {
-  ConnectionProvider,
-  WalletProvider,
-} from "@solana/wallet-adapter-react";
-import { useMemo } from "react";
-import {
-  PhantomWalletAdapter,
-  BackpackWalletAdapter,
-} from "@solana/wallet-adapter-wallets";
-import { clusterApiUrl } from "@solana/web3.js";
 import "../components/custom.scss"
-
-
-
+import Web3 from "web3";
+import AppProvider from "../context/AppContext";
+import { Mainnet, ChainId, DAppProvider} from "@usedapp/core";
 function MyApp({ Component, pageProps }) {
-
-
-  const wallets = useMemo(
-    () => [
-      new PhantomWalletAdapter(),
-      new BackpackWalletAdapter(),
-    ],
-    []
-  );
-  const endpoint = useMemo(() => clusterApiUrl("mainnet-beta"), []);
+  const config = {
+    multicallAddresses: ["0x5FbDB2315678afecb367f032d93F642f64180aa3"],
+  };
   return (
     <>
-      <ConnectionProvider endpoint={endpoint}>
-        <WalletProvider wallets={wallets} autoConnect>
-          <Component {...pageProps} />   
-        </WalletProvider>
-      </ConnectionProvider>
+    <DAppProvider config={config}
+    >
+      <AppProvider>
+        <Component {...pageProps} />  
+      </AppProvider>
+    </DAppProvider>
     </>
   )
 }

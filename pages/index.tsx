@@ -4,6 +4,7 @@ import localFont from "@next/font/local";
 import { useSlotMachineStyles } from "../components/SlotMachine.style";
 import { useEffect, useState } from "react";
 import Display from "seven-segment-display"
+import { useEthers } from "@usedapp/core";
 
 
 const poppins = localFont({
@@ -36,6 +37,8 @@ export default function Home() {
   const [result, setResult] = useState([]);
   const [total, setTotal] = useState("");
   let resul = [];
+  const { account, activateBrowserWallet, deactivate } = useEthers();
+  const isConnected = account !== undefined;
   
 
   const getRandomItem = () => {
@@ -510,6 +513,17 @@ export default function Home() {
           </div>
         </>
       ) : null}
+      <div className="flex fixed top-[50px] right-[50px]">
+        {isConnected ? (
+          <button className="w-[150px] h-[50px] text-white rounded-2xl bg-black/70"  onClick={deactivate}>
+            Disconnect
+          </button>
+        ) : (
+          <button className="w-[150px] h-[50px] text-white rounded-2xl bg-black/70" onClick={() => activateBrowserWallet()}>
+            Connect
+          </button>
+        )}
+      </div>
     </div>
   );
 }
