@@ -1,18 +1,16 @@
-import React, { useEffect} from 'react'
+import React from 'react'
 import 'tailwindcss/tailwind.css'
-import { useRouter } from 'next/router'
 import {
   ConnectionProvider,
   WalletProvider,
 } from "@solana/wallet-adapter-react";
 import { useMemo } from "react";
-import Loader from '../components/Loader'
 import {
   PhantomWalletAdapter,
   BackpackWalletAdapter,
 } from "@solana/wallet-adapter-wallets";
 import { clusterApiUrl } from "@solana/web3.js";
-
+import "../components/custom.scss"
 
 
 
