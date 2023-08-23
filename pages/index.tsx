@@ -1,13 +1,11 @@
 /** @jsxImportSource @emotion/react */
 import "react-toastify/dist/ReactToastify.css";
-import axios from 'axios';
 import localFont from "@next/font/local";
 import { useSlotMachineStyles } from "../components/SlotMachine.style";
 import { useEffect, useState } from "react";
 import Display from "seven-segment-display";
 import { useEthers } from "@usedapp/core";
-import { ethers, Contract } from "ethers"
-import { MetaMaskInpageProvider } from "@metamask/providers";
+import { ethers } from "ethers"
 import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -336,11 +334,12 @@ export default function Home() {
         else if (result.number === 4) betResult = 0.6 * bet;
         else if (result.number === 5) betResult = 4 * bet;
       }
-      if (result.wildNum === 0 || result.wildNum === 1) {
-        return betResult;
-      } else if (result.wildNum === 2) return betResult * 2;
-      else if (result.wildNum === 3) return betResult * 6;
-      else if (result.wildNum === 4) return betResult * 24;
+      return betResult;
+      // if (result.wildNum === 0 || result.wildNum === 1) {
+      //   return betResult;
+      // } else if (result.wildNum === 2) return betResult * 2;
+      // else if (result.wildNum === 3) return betResult * 6;
+      // else if (result.wildNum === 4) return betResult * 24;
     };
     for (var i = 1; i <= 25; i++) {
       maxArray[i] = getMax(itemsArray[i]);
