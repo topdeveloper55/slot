@@ -11,11 +11,11 @@ import { MetaMaskInpageProvider } from "@metamask/providers";
 import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-declare global {
-  interface Window{
-    ethereum?:MetaMaskInpageProvider
-  }
-}
+// declare global {
+//   interface Window{
+//     ethereum?:MetaMaskInpageProvider
+//   }
+// }
 const poppins = localFont({
   src: [
     {
