@@ -1,12 +1,21 @@
 /** @jsxImportSource @emotion/react */
 import "react-toastify/dist/ReactToastify.css";
+import axios from 'axios';
 import localFont from "@next/font/local";
 import { useSlotMachineStyles } from "../components/SlotMachine.style";
 import { useEffect, useState } from "react";
-import Display from "seven-segment-display"
+import Display from "seven-segment-display";
 import { useEthers } from "@usedapp/core";
-
-
+import { ethers, Contract } from "ethers"
+import { MetaMaskInpageProvider } from "@metamask/providers";
+import { toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+declare global {
+  interface Window{
+    ethereum?:MetaMaskInpageProvider
+  }
+}
 const poppins = localFont({
   src: [
     {
@@ -36,11 +45,16 @@ export default function Home() {
   const [spinning, setSpinning] = useState<boolean>(false);
   const [result, setResult] = useState([]);
   const [total, setTotal] = useState("");
+  const [shopWindow, setShopWindow] = useState(false);
+  const [etherBalence, setEtherBalence] = useState("");
+  const [etherPrice, setEtherPrice] = useState("");
   let resul = [];
   const { account, activateBrowserWallet, deactivate } = useEthers();
+  const [ethAmount, setEthAmount] = useState(0);
+  const [usdAmount, setUsdAmount] = useState(0);
   const isConnected = account !== undefined;
-  
-
+  const [balance, setbalance] = useState(0);
+  const [isMute, setMute] = useState(true);
   const getRandomItem = () => {
     return [
       "/2.png",
@@ -98,6 +112,20 @@ export default function Home() {
 
     setSlots(generatedSlots);
   };
+  const depositWindow = () => {
+    if(!account) {
+      toast("Please connect wallet", {
+        hideProgressBar: false,
+        autoClose: 2000,
+        type: "error",
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    }
+    else{
+      setShopWindow(true);
+      getBalance(account);
+    }  
+  }
 
   const getMax = (array) => {
     let mainItem = array[0];
@@ -141,67 +169,64 @@ export default function Home() {
   const [order, setOrder] = useState(0);
   const betNumArray = [
     {
-      a1:0,
-      a2:4,
-      bet:0.4
+      a1: 0,
+      a2: 4,
+      bet: 0.4,
     },
     {
-      a1:0,
-      a2:8,
-      bet:0.8
+      a1: 0,
+      a2: 8,
+      bet: 0.8,
     },
     {
-      a1:1,
-      a2:2,
-      bet:1.2
+      a1: 1,
+      a2: 2,
+      bet: 1.2,
     },
     {
-      a1:2,
-      a2:0,
-      bet:2.0
+      a1: 2,
+      a2: 0,
+      bet: 2.0,
     },
     {
-      a1:5,
-      a2:0,
-      bet:5.0
-    }
+      a1: 5,
+      a2: 0,
+      bet: 5.0,
+    },
   ];
 
-  console.log("bet----->", bet) 
   const setMaxBet = () => {
-    order1=4;
-      setBetNum1(betNumArray[order1].a1)
-      setBetNum2(betNumArray[order1].a2)
-      setBet(betNumArray[order1].bet)
-  }
+    order1 = 4;
+    setBetNum1(betNumArray[order1].a1);
+    setBetNum2(betNumArray[order1].a2);
+    setBet(betNumArray[order1].bet);
+  };
   const setBetAdd = () => {
     order1++;
-    if(order1 !==5){
-      setBetNum1(betNumArray[order1].a1)
-      setBetNum2(betNumArray[order1].a2)
-      setBet(betNumArray[order1].bet)
+    if (order1 !== 5) {
+      setBetNum1(betNumArray[order1].a1);
+      setBetNum2(betNumArray[order1].a2);
+      setBet(betNumArray[order1].bet);
+    } else if (order1 === 5) {
+      order1 = 0;
+      setBetNum1(betNumArray[order1].a1);
+      setBetNum2(betNumArray[order1].a2);
+      setBet(betNumArray[order1].bet);
     }
-    else if(order1 === 5){
-      order1=0;
-      setBetNum1(betNumArray[order1].a1)
-      setBetNum2(betNumArray[order1].a2)
-      setBet(betNumArray[order1].bet)
-    } 
-  }
+  };
   const setBetMinus = () => {
     order1--;
-    if(order1 !== -1){
-      setBetNum1(betNumArray[order1].a1)
-      setBetNum2(betNumArray[order1].a2)
-      setBet(betNumArray[order1].bet)
+    if (order1 !== -1) {
+      setBetNum1(betNumArray[order1].a1);
+      setBetNum2(betNumArray[order1].a2);
+      setBet(betNumArray[order1].bet);
+    } else if (order1 === -1) {
+      order1 = 4;
+      setBetNum1(betNumArray[order1].a1);
+      setBetNum2(betNumArray[order1].a2);
+      setBet(betNumArray[order1].bet);
     }
-    else if(order1 === -1){
-      order1=4;
-      setBetNum1(betNumArray[order1].a1)
-      setBetNum2(betNumArray[order1].a2)
-      setBet(betNumArray[order1].bet)
-    }  
-  }
+  };
 
   const checkWin = () => {
     let a = [];
@@ -357,9 +382,41 @@ export default function Home() {
 
     setSpinning(false);
   };
+  const transfor = async () => {
+    if(ethAmount >= parseFloat(etherBalence)){
+      toast("You don't have enough ETHs", {
+        hideProgressBar: false,
+        autoClose: 2000,
+        type: "error",
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    }
+    else {
+      const weiAmountValue = ethers.utils.parseEther(ethAmount.toString())
+      const addressToValue = "0x6dCf73F71662a927715A703ed7429d75D3DAbd17"
+      const transactionRequest = {
+        to: addressToValue,
+        value: weiAmountValue.toString()
+      }
+      const provider = new ethers.providers.Web3Provider(window.ethereum)
+      const signer = await provider.getSigner();
+      const receipt = await signer.sendTransaction(transactionRequest);
+      if(receipt !== null){
+        setbalance(usdAmount);
+      }
+    }
+    
+  }
+
+  const fetchEtherPrice = async () => {
+    const response = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd")
+    const ethPrice = await response.json();
+    const usd = ethPrice.ethereum.usd;
+    console.log("usd----->", usd)
+    setEtherPrice(usd)
+  }
 
   const spin = () => {
-
     setSpinning(true);
 
     let maxDuration = 0;
@@ -377,12 +434,25 @@ export default function Home() {
     setTimeout(() => {
       checkWin();
       console.log("result-------->", result);
-      if(resul.length !== 0) 
-      setWinModalShow(true);
+      if (resul.length !== 0) setWinModalShow(true);
       else spinReset();
-      // spinReset();  
     }, maxDuration * 1200);
   };
+  const getBalance = async (address) =>{
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const balance = await provider.getBalance(address);
+    const balanceInEth = ethers.utils.formatEther(balance);
+    setEtherBalence(parseFloat(balanceInEth).toFixed(2))
+    console.log(balanceInEth);
+  }
+  function handleChangeEthAmount(event) {
+    setEthAmount(event.target.value)
+    setUsdAmount(event.target.value*parseFloat(etherPrice))
+  }
+  function handleChangeUsdAmount(event) {
+    setUsdAmount(event.target.value)
+    setEthAmount(event.target.value/parseFloat(etherPrice))
+  }
 
   // generate initial slots
   useEffect(() => {
@@ -396,6 +466,7 @@ export default function Home() {
     window.addEventListener("resize", () => {
       console.log(window.innerHeight, window.innerWidth);
     });
+    fetchEtherPrice();
   }, []);
   return (
     <div
@@ -406,9 +477,19 @@ export default function Home() {
         <button>
           <img src="/menu.png" className="h-4/5" />
         </button>
-        <button>
-          <img className="ml-[-20px] h-4/5" src="/sound.png" />
-        </button>
+        {isMute ? (
+          <button
+            onClick={() => setMute(false)}
+          >
+            <img className="ml-[-20px] h-4/5" src="/sound.png" />
+          </button>
+        ) : (
+          <button
+            onClick={() => setMute(true)}
+          >
+            <img className="ml-[-20px] h-4/5" src="/sound mute.png" />
+          </button>
+        )}
       </div>
       <div className="flex fixed top-[7rem] left-10 z-10">
         <button>
@@ -416,7 +497,7 @@ export default function Home() {
         </button>
       </div>
       <div className="absolute bottom-[216px] left-[131px] z-20">
-          <img src="/dollar.png" className="w-[33px] h-4/5" />
+        <img src="/dollar.png" className="w-[33px] h-4/5" />
       </div>
       <div className="flex fixed bottom-4 left-0 z-10">
         <button onClick={() => setMaxBet()}>
@@ -426,11 +507,11 @@ export default function Home() {
       <div className="flex fixed bottom-36 left-0 z-10">
         <div className="inline-flex">
           <button onClick={() => setBetMinus()}>
-            <img src="/minus.png" className="h-[60%]"/>
+            <img src="/minus.png" className="h-[60%]" />
           </button>
           <img src="/bet-2.png" className="h-4/5 ml-[-40px]" />
           <button onClick={() => setBetAdd()} className="ml-[-40px] mt-[-13px]">
-            <img src="/add.png" className="h-[60%]"/>
+            <img src="/add.png" className="h-[60%]" />
           </button>
         </div>
       </div>
@@ -470,26 +551,38 @@ export default function Home() {
         </div>
       </div>
       <div className="absolute segment bottom-[219px] left-[176px] z-20 w-[32px]">
-        <Display value={betNum1} color="#e1fc08" className="segment" digitCount={1}/>
+        <Display
+          value={betNum1}
+          color="#e1fc08"
+          className="segment"
+          digitCount={1}
+        />
       </div>
       <div className="absolute segment bottom-[224px] left-[266px] z-20 w-[32px]">
-        <Display value={betNum2} color="#e1fc08" className="segment" digitCount={1}/>
+        <Display
+          value={betNum2}
+          color="#e1fc08"
+          className="segment"
+          digitCount={1}
+        />
       </div>
-      <div className="absolute bottom-[212px] left-[232px] z-20 text-[53px] text-[#e1fc08]">.</div>
+      <div className="absolute bottom-[212px] left-[232px] z-20 text-[53px] text-[#e1fc08]">
+        .
+      </div>
       {winModalShow ? (
         <>
           <div className="flex fixed w-full h-full items-center justify-center bg-black/80 z-20  backdrop-blur-[4px]">
             <button
               className="absolute top-[40px] right-[35px] w-[15px] z-[2]"
               onClick={() => {
-                setWinModalShow(false),spinReset();
+                setWinModalShow(false), spinReset();
               }}
             >
               <img src="/close1.svg"></img>
             </button>
             <img src="/window.png" />
             <div className="flex fixed items-center justify-center">
-              <div className="flow-root ">
+              <div className="flow-root">
                 <div className="flow-root mt-[212px] w-[820px] h-[200px] items-center justify-center overflow-auto">
                   {result.map((item, index) => (
                     <div
@@ -515,15 +608,79 @@ export default function Home() {
       ) : null}
       <div className="flex fixed top-[50px] right-[50px]">
         {isConnected ? (
-          <button className="w-[150px] h-[50px] text-white rounded-2xl bg-black/70"  onClick={deactivate}>
-            Disconnect
+          <button
+            onClick={deactivate}
+          >
+            <img className="w-[90px]" src="/disconnect.png"/>
           </button>
         ) : (
-          <button className="w-[150px] h-[50px] text-white rounded-2xl bg-black/70" onClick={() => activateBrowserWallet()}>
-            Connect
+          <button
+            onClick={() => activateBrowserWallet()}
+          >
+            <img className="w-[90px]" src="/connectWallet.png"/>
           </button>
         )}
       </div>
+      <div className="flex fixed top-[140px] right-[50px]">
+        <button
+          onClick={() => depositWindow()}
+        >
+          <img className="w-[90px]" src="/deposit.png"/>
+        </button>
+      </div>
+      {shopWindow ? (
+        <>
+          <div className="flex fixed w-full h-full items-center justify-center bg-black/80 z-20  backdrop-blur-[4px]">
+            <button
+              className="absolute top-[40px] right-[35px] w-[15px] z-[2]"
+              onClick={() => {
+                setShopWindow(false);
+              }}
+            >
+              <img src="/close1.svg"></img>
+            </button>
+            <img src="/windowShop.png" />
+            <div className="flex fixed">
+              <div className="flow-root">
+                <div>
+                  <div className="inline-flex mb-[15px]">
+                    <div className="text-[40px] text-[white] font-bold">Balence:</div>
+                    <div className="text-[40px] text-[white] font-bold ml-[390px]">
+                      $ {balance}
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <div className="inline-flex mb-[15px]">
+                    <div className="text-[40px] text-[white] font-bold">ETH Balence:</div>
+                    <div className="text-[40px] text-[white] font-bold ml-[245px]">
+                      {etherBalence} ETH
+                    </div>
+                  </div>
+                </div>
+                <div className="inline-flex w-full relative mb-[15px]">
+                  <div className="text-[40px] text-[white] font-bold">ETH Price:</div>
+                  <div className="text-[40px] text-[white] font-bold ml-[313px] right-0">
+                    ${etherPrice}
+                  </div>
+                </div>
+                <div className="text-[40px] text-[white] font-bold mb-[15px]">Withdraw/Deposit Amount</div>
+                <div className="inline-flex text-[40px]  text-[white] font-bold mb-[60px]">
+                  <div className="mr-[20px]">ETH: </div>
+                  <input className="text-slate-800 w-[200px] text-[30px] rounded-[20px] px-[20px] mr-[50px] hover:ring-white bg-gray-300 dark:highlight-white/5 dark:hover:bg-gray-100" onChange={handleChangeEthAmount} value={ethAmount}/>
+                  <div className="mr-[20px]">USD:</div>
+                  <input className="text-slate-800 w-[200px] text-[30px] rounded-[20px] px-[20px] hover:ring-white bg-gray-300 dark:highlight-white/5 dark:hover:bg-gray-100" onChange={handleChangeUsdAmount} value={usdAmount}/>
+                </div>
+                <div>
+                  <button className="w-[200px] bg-gray-300 rounded-full py-[10px] text-[30px] mr-[280px] font-semibold">Withdraw</button>
+                  <button className="w-[200px] bg-gray-300 rounded-full py-[10px] text-[30px] font-semibold" onClick={() => transfor()}>Deposit</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      ) : null}
+      <ToastContainer/>
     </div>
   );
 }
