@@ -9,6 +9,7 @@ import { ethers } from "ethers"
 import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { resolve } from "path";
 // declare global {
 //   interface Window{
 //     ethereum?:MetaMaskInpageProvider
@@ -53,6 +54,7 @@ export default function Home() {
   const isConnected = account !== undefined;
   const [balance, setbalance] = useState(0);
   const [isMute, setMute] = useState(true);
+  const [winStatus, setWinStatus] = useState(false);
   const getRandomItem = () => {
     return [
       "/2.png",
@@ -373,13 +375,13 @@ export default function Home() {
   };
 
   const spinReset = () => {
-    slots.forEach((row) => {
-      row.durationSeconds = 0;
-    });
-
-    generateSlots(slotCount, itemCount, slots);
-
-    setSpinning(false);
+    return new Promise((resolve, reject) => {
+      slots.forEach((row) => {
+        row.durationSeconds = 0;
+      });
+      generateSlots(slotCount, itemCount, slots);
+      setSpinning(false);
+    })  
   };
   const transfor = async () => {
     if(ethAmount >= parseFloat(etherBalence)){
@@ -414,28 +416,33 @@ export default function Home() {
     console.log("usd----->", usd)
     setEtherPrice(usd)
   }
+  const spinRotate = (()=> {
+    spinReset()
+    .then(()=> {
+      spin()
+    })
+  })
 
   const spin = () => {
-    setSpinning(true);
-
-    let maxDuration = 0;
-
-    slots.forEach((row, index) => {
-      row.y = "0";
-      row.durationSeconds = 2 + index;
-
-      if (row.durationSeconds > maxDuration) {
-        maxDuration = row.durationSeconds;
-      }
-    });
-
-    setSlots([...slots]);
-    setTimeout(() => {
-      checkWin();
-      console.log("result-------->", result);
-      if (resul.length !== 0) setWinModalShow(true);
-      else spinReset();
-    }, maxDuration * 1200);
+      setSpinning(true);
+      let maxDuration = 0;
+      slots.forEach((row, index) => {
+        row.y = "0";
+        row.durationSeconds = 2 + index;
+        if (row.durationSeconds > maxDuration) {
+          maxDuration = row.durationSeconds;
+        }
+      });
+      setSlots([...slots]);
+      setTimeout(() => {
+        checkWin();
+        if (resul.length !== 0) {setWinModalShow(true),setSpinning(false), setWinStatus(true)}
+        else if(resul.length === 0){spinReset(), setWinStatus(false)};
+      }, maxDuration * 1200);
+    // return new Promise ((resolve, reject) => {
+      
+    // }) 
+      
   };
   const getBalance = async (address) =>{
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -466,12 +473,20 @@ export default function Home() {
       console.log(window.innerHeight, window.innerWidth);
     });
     fetchEtherPrice();
+    // const audio = new Audio('/music.mp3');
+    // audio.autoplay = true;
+    // audio.loop = true;
+    // audio.play();
   }, []);
+
   return (
     <div
       className={`absolute h-full w-full md:overflow-hidden ${poppins.variable} font-sans`}
     >
       <iframe className="h-full w-full fixed" src="1.html"></iframe>
+      <audio autoPlay loop>
+        <source src="/music.mp3" type="audio/mp3"/>
+      </audio>
       <div className="flex fixed top-5 left-10 z-10">
         <button>
           <img src="/menu.png" className="h-4/5" />
@@ -524,9 +539,14 @@ export default function Home() {
           <img src="/slot mchn.png" className="h-[965px] w-[1714px]" />
         </div>
       </div>
-      <div className="flex fixed bottom-4 right-0 z-10">
+      <div className="flex fixed bottom-[16px] right-0 z-10">
         <button onClick={() => !spinning && spin()}>
           <img src="/spin.png" className="h-4/5" />
+        </button>
+      </div>
+      <div className="flex fixed bottom-[400px] right-[30px] z-20">
+        <button onClick={() => spinReset()}>
+          <img className="w-[90px]" src="/refresh.png"/>
         </button>
       </div>
       <div className="flex fixed w-[1920px] h-[1000px] items-center justify-center">
@@ -574,7 +594,7 @@ export default function Home() {
             <button
               className="absolute top-[40px] right-[35px] w-[15px] z-[2]"
               onClick={() => {
-                setWinModalShow(false), spinReset();
+                setWinModalShow(false);
               }}
             >
               <img src="/close1.svg"></img>
@@ -643,7 +663,7 @@ export default function Home() {
               <div className="flow-root">
                 <div>
                   <div className="inline-flex mb-[15px]">
-                    <div className="text-[40px] text-[white] font-bold">Balence:</div>
+                    <div className="text-[40px] text-[white] font-bold">Balance:</div>
                     <div className="text-[40px] text-[white] font-bold ml-[390px]">
                       $ {balance}
                     </div>
@@ -651,7 +671,7 @@ export default function Home() {
                 </div>
                 <div>
                   <div className="inline-flex mb-[15px]">
-                    <div className="text-[40px] text-[white] font-bold">ETH Balence:</div>
+                    <div className="text-[40px] text-[white] font-bold">ETH Balance:</div>
                     <div className="text-[40px] text-[white] font-bold ml-[245px]">
                       {etherBalence} ETH
                     </div>
