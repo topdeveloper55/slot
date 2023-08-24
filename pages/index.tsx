@@ -2,7 +2,7 @@
 import "react-toastify/dist/ReactToastify.css";
 import localFont from "@next/font/local";
 import { useSlotMachineStyles } from "../components/SlotMachine.style";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Display from "seven-segment-display";
 import { useEthers } from "@usedapp/core";
 import { ethers } from "ethers"
@@ -416,12 +416,6 @@ export default function Home() {
     console.log("usd----->", usd)
     setEtherPrice(usd)
   }
-  const spinRotate = (()=> {
-    spinReset()
-    .then(()=> {
-      spin()
-    })
-  })
 
   const spin = () => {
       setSpinning(true);
@@ -441,8 +435,7 @@ export default function Home() {
       }, maxDuration * 1200);
     // return new Promise ((resolve, reject) => {
       
-    // }) 
-      
+    // })  
   };
   const getBalance = async (address) =>{
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -459,6 +452,13 @@ export default function Home() {
     setUsdAmount(event.target.value)
     setEthAmount(event.target.value/parseFloat(etherPrice))
   }
+  const audioRef = useRef(null);
+  useEffect(() => {
+    const audio = audioRef.current;
+    audio.autoplay = true;
+    audio.loop = true;
+    audio.volume = 0.5; // Adjust volume as needed
+  }, []);
 
   // generate initial slots
   useEffect(() => {
@@ -473,10 +473,6 @@ export default function Home() {
       console.log(window.innerHeight, window.innerWidth);
     });
     fetchEtherPrice();
-    // const audio = new Audio('/music.mp3');
-    // audio.autoplay = true;
-    // audio.loop = true;
-    // audio.play();
   }, []);
 
   return (
@@ -484,9 +480,7 @@ export default function Home() {
       className={`absolute h-full w-full md:overflow-hidden ${poppins.variable} font-sans`}
     >
       <iframe className="h-full w-full fixed" src="1.html"></iframe>
-      <audio autoPlay loop>
-        <source src="/music.mp3" type="audio/mp3"/>
-      </audio>
+      <audio ref={audioRef} src="/music.mp3" />
       <div className="flex fixed top-5 left-10 z-10">
         <button>
           <img src="/menu.png" className="h-4/5" />
