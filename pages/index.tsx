@@ -487,13 +487,13 @@ export default function Home() {
         </button>
         {isMute ? (
           <button
-            onClick={() => setMute(false)}
+            onClick={() => {setMute(false), audioRef.current.pause()}}
           >
             <img className="ml-[-20px] h-4/5" src="/sound.png" />
           </button>
         ) : (
           <button
-            onClick={() => setMute(true)}
+            onClick={() => {setMute(true), audioRef.current.play()}}
           >
             <img className="ml-[-20px] h-4/5" src="/sound mute.png" />
           </button>
