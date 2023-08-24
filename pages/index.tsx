@@ -454,7 +454,7 @@ export default function Home() {
   }
   const audioRef = useRef(null);
   useEffect(() => {
-    const audio = audioRef.current;
+    const audio = audioRef.current.play();
     audio.autoplay = true;
     audio.loop = true;
     audio.volume = 0.5; // Adjust volume as needed
