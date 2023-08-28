@@ -64,6 +64,7 @@ export default function Home() {
   const [autoBuyPlay, setAutoPlay] = useState(false);
   const [info, setInfo] = useState(false);
   const [infoPage, setInfoPage] = useState(1);
+  const [changeBalance, setChangeBalance] = useState(true);
   const getRandomItem = () => {
     return [
       "/1.png",
@@ -370,15 +371,14 @@ export default function Home() {
   }
   const bonusBuy = async () => {
     const bonusPrice = 100 * bet;
-    if(balance < bonusPrice){
+    if (balance < bonusPrice) {
       toast("You don't have enough balance", {
         hideProgressBar: false,
         autoClose: 2000,
         type: "error",
         position: toast.POSITION.TOP_RIGHT,
       });
-    }
-    else {
+    } else {
       const response = await axios.post(
         "https://spin-service-master.onrender.com/api/spin/bonusBuy",
         {
@@ -398,23 +398,29 @@ export default function Home() {
   };
 
   const sendResultAutoSum = async () => {
-    const response = await axios.post("https://spin-service-master.onrender.com/api/spin/win", {
-      data: {
-        walletAddress: account,
-        amount: autoSum,
-      },
-    });
+    const response = await axios.post(
+      "https://spin-service-master.onrender.com/api/spin/win",
+      {
+        data: {
+          walletAddress: account,
+          amount: autoSum,
+        },
+      }
+    );
     setBalence(parseFloat(response.data));
   };
 
   useEffect(() => {
-    if (flag === true && bonusNum >= 0) {
+    if (flag === true && bonusNum > 0) {
       autoSpin();
-      if (bonusNum === 0) {
-        console.log("autoSum", autoSum);
-        sendResultAutoSum();
-        setAutoWin(true);
-      }
+    }
+    if (flag === true && bonusNum === 0) {
+      console.log("autoSum", autoSum);
+      sendResultAutoSum();
+      setAutoWin(true);
+      setSpinCounter(1);
+      setSpinning(false);
+      setChangeBalance(true);
     }
   }, [flag]);
 
@@ -624,30 +630,35 @@ export default function Home() {
     setBet(betNumArray[order1].bet);
   };
   const setBetAdd = () => {
-    order1++;
-    if (order1 !== 5) {
-      setBetNum1(betNumArray[order1].a1);
-      setBetNum2(betNumArray[order1].a2);
-      setBet(betNumArray[order1].bet);
-    } else if (order1 === 5) {
-      order1 = 0;
-      setBetNum1(betNumArray[order1].a1);
-      setBetNum2(betNumArray[order1].a2);
-      setBet(betNumArray[order1].bet);
+    if (changeBalance === true) {
+      order1++;
+      if (order1 !== 5) {
+        setBetNum1(betNumArray[order1].a1);
+        setBetNum2(betNumArray[order1].a2);
+        setBet(betNumArray[order1].bet);
+      } else if (order1 === 5) {
+        order1 = 0;
+        setBetNum1(betNumArray[order1].a1);
+        setBetNum2(betNumArray[order1].a2);
+        setBet(betNumArray[order1].bet);
+      }
     }
+    else null;
   };
   const setBetMinus = () => {
-    order1--;
-    if (order1 !== -1) {
-      setBetNum1(betNumArray[order1].a1);
-      setBetNum2(betNumArray[order1].a2);
-      setBet(betNumArray[order1].bet);
-    } else if (order1 === -1) {
-      order1 = 4;
-      setBetNum1(betNumArray[order1].a1);
-      setBetNum2(betNumArray[order1].a2);
-      setBet(betNumArray[order1].bet);
-    }
+    if (changeBalance === true) {
+      order1--;
+      if (order1 !== -1) {
+        setBetNum1(betNumArray[order1].a1);
+        setBetNum2(betNumArray[order1].a2);
+        setBet(betNumArray[order1].bet);
+      } else if (order1 === -1) {
+        order1 = 4;
+        setBetNum1(betNumArray[order1].a1);
+        setBetNum2(betNumArray[order1].a2);
+        setBet(betNumArray[order1].bet);
+      }
+    } else null;
   };
 
   const checkWin = async () => {
@@ -863,12 +874,15 @@ export default function Home() {
   };
 
   const sendResult = async () => {
-    const response = await axios.post("https://spin-service-master.onrender.com/api/spin/win", {
-      data: {
-        walletAddress: account,
-        amount: addBalance,
-      },
-    });
+    const response = await axios.post(
+      "https://spin-service-master.onrender.com/api/spin/win",
+      {
+        data: {
+          walletAddress: account,
+          amount: addBalance,
+        },
+      }
+    );
     setBalence(parseFloat(response.data));
   };
   const [spinCounter, setSpinCounter] = useState(0);
@@ -922,6 +936,8 @@ export default function Home() {
     ////////////////////////////////////////////////////////////////////////
   };
   const spinRotate = () => {
+    audioRef.current.play();
+    console.log("spincounter-------->", spinCounter);
     if (spinCounter === 0) spin();
     else if (spinCounter === 1) spinReset2();
     else if (spinCounter === 2) spin();
@@ -958,35 +974,45 @@ export default function Home() {
     }
   };
   const withdraw = async () => {
-    const response = await axios.post(
-      "https://spin-service-master.onrender.com/api/spin/withdraw",
-      {
-        data: {
-          walletAddress: account,
-          amount: ethAmount,
-          usdAmount: usdAmount,
-        },
-      }
-    );
-    setBalence(parseFloat(response.data));
+    if (balance < usdAmount) {
+      toast("You don't have enough balance", {
+        hideProgressBar: false,
+        autoClose: 2000,
+        type: "error",
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    } else {
+      const response = await axios.post(
+        "https://spin-service-master.onrender.com/api/spin/withdraw",
+        {
+          data: {
+            walletAddress: account,
+            amount: ethAmount,
+            usdAmount: usdAmount,
+          },
+        }
+      );
+      setBalence(parseFloat(response.data));
+    }
   };
   const connectWallet = async () => {
     activateBrowserWallet();
     let chainID;
     try {
-      await window.ethereum.request({ method: 'eth_chainId' })
-        .then(chainId => {
+      await window.ethereum
+        .request({ method: "eth_chainId" })
+        .then((chainId) => {
           chainID = chainId;
         });
     } catch (error) {
       console.error(error); // Handle error appropriately
     }
     const ethereum = window.ethereum;
-    if(chainID !== "0x1"){
+    if (chainID !== "0x1") {
       try {
         await ethereum.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: '0x1' }], // Change chainId to the desired network
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: "0x1" }], // Change chainId to the desired network
         });
       } catch (error) {
         console.log(error);
@@ -1062,7 +1088,7 @@ export default function Home() {
       className={`absolute h-full w-full md:overflow-hidden ${poppins.variable} font-sans`}
     >
       <iframe className="h-full w-full fixed" src="1.html"></iframe>
-      <audio ref={audioRef} src="/music.mp3" autoPlay={true} loop />
+      <audio ref={audioRef} src="/music.mp3" autoPlay={true} loop={true} />
       <div className="flex fixed top-5 left-10 z-10">
         <button
           onClick={() => {
@@ -1423,7 +1449,7 @@ export default function Home() {
             </button>
             <img src="/windowShop.png" />
             <div className="flex fixed text-[40px] text-white">
-              You have earned total ${autoSum.toFixed(2)}.
+              You have earned ${autoSum.toFixed(2)} in total.
             </div>
           </div>
         </>
@@ -1465,6 +1491,7 @@ export default function Home() {
                         className="w-[200px] bg-gray-300 rounded-full py-[10px] text-[30px] ml-[50px] font-semibold"
                         onClick={() => {
                           autoPlay(), setMenuWindow(false), setAutoPlay(false);
+                          setChangeBalance(false);
                         }}
                       >
                         AutoPlay
