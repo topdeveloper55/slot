@@ -398,9 +398,9 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (flag === true && bonusNum > 0) {
+    if (flag === true && bonusNum >= 0) {
       autoSpin();
-      if (bonusNum === 1) {
+      if (bonusNum === 0) {
         console.log("autoSum", autoSum);
         sendResultAutoSum();
         setAutoWin(true);
