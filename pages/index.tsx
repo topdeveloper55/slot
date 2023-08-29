@@ -66,6 +66,8 @@ export default function Home() {
   const [infoPage, setInfoPage] = useState(1);
   const [changeBalance, setChangeBalance] = useState(true);
   const [depositSet, setDepositSet] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [oneAutoSum, setOneAutoSum] = useState(0);
   const getRandomItem = () => {
     return [
       "/1.png",
@@ -88,42 +90,42 @@ export default function Home() {
       "/2.png",
       "/3.png",
       "/4.png",
-      "/5.png",
-      "/6.png",
-      "/7.png",
+      "/2.png",
+      "/3.png",
+      "/4.png",
       "/8.png",
       "/10.png",
       "/11.png",
-      "/12.png",
-      "/13.png",
-      "/14.png",
+      "/2.png",
+      "/3.png",
+      "/4.png",
       "/15.png",
       "/2.png",
       "/3.png",
       "/4.png",
       "/5.png",
-      "/6.png",
-      "/7.png",
-      "/8.png",
-      "/10.png",
-      "/11.png",
-      "/12.png",
-      "/13.png",
-      "/14.png",
-      "/15.png",
       "/2.png",
       "/3.png",
       "/4.png",
-      "/5.png",
-      "/6.png",
-      "/7.png",
-      "/8.png",
-      "/10.png",
-      "/11.png",
-      "/12.png",
-      "/13.png",
-      "/14.png",
-      "/15.png",
+      "/2.png",
+      "/3.png",
+      "/4.png",
+      "/2.png",
+      "/3.png",
+      "/4.png",
+      "/2.png",
+      "/3.png",
+      "/4.png",
+      "/2.png",
+      "/3.png",
+      "/4.png",
+      "/2.png",
+      "/3.png",
+      "/4.png",
+      "/2.png",
+      "/3.png",
+      "/4.png",
+      "/2.png"
     ][Math.floor(Math.random() * 56)];
   };
 
@@ -214,8 +216,21 @@ export default function Home() {
       "/12.png",
       "/13.png",
       "/14.png",
-    ][Math.floor(Math.random() * 64)];
+      "/2.png",
+      "/3.png",
+      "/4.png",
+      "/5.png",
+      "/6.png",
+      "/7.png",
+      "/8.png",
+      "/10.png",
+      "/11.png",
+      "/12.png",
+      "/13.png",
+      "/14.png",
+    ][Math.floor(Math.random() * 76)];
   };
+  let wildArray = [];
   const [autoSum, setAutoSum] = useState(0);
   const getMax1 = (array) => {
     let mainItem = array[0];
@@ -291,7 +306,7 @@ export default function Home() {
       return item;
     }
   };
-  let wildArray = [];
+  
   const checkWin1 = () => {
     let a = [];
     slots.forEach((slot) => {
@@ -502,6 +517,8 @@ export default function Home() {
   };
 
   const sendResultAutoSum = async () => {
+    console.log("autosum---->", autoSum)
+    console.log("oneAutoSum---->", oneAutoSum)
     const response = await axios.post(
       "https://spin-service-master.onrender.com/api/spin/win",
       {
@@ -520,11 +537,14 @@ export default function Home() {
     }
     if (flag === true && bonusNum === 0) {
       console.log("autoSum", autoSum);
+      setOneAutoSum(autoSum)
       sendResultAutoSum();
       setAutoWin(true);
       setSpinCounter(1);
       setSpinning(false);
       setChangeBalance(true);
+      setAutoSum(0);
+      wildArray = [];
     }
   }, [flag]);
 
@@ -1026,7 +1046,7 @@ export default function Home() {
   };
   const [spinCounter, setSpinCounter] = useState(0);
   const spin = async () => {
-    if (spinCounter === 2) {
+    if (spinCounter === 3) {
       setSpinCounter(0);
     }
     if (balance < bet) {
@@ -1075,11 +1095,9 @@ export default function Home() {
     ////////////////////////////////////////////////////////////////////////
   };
   const spinRotate = () => {
-    audioRef.current.play();
     console.log("spincounter-------->", spinCounter);
-    if (spinCounter === 0) spin();
-    else if (spinCounter === 1) spinReset2();
-    else if (spinCounter === 2) spin();
+    if (spinCounter %2== 0) spin();
+    else if (spinCounter %2== 1) spinReset2();
   };
   const getBalance = async (address) => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -1121,6 +1139,7 @@ export default function Home() {
         position: toast.POSITION.TOP_RIGHT,
       });
     } else {
+      setLoading(true)
       const response = await axios.post(
         "https://spin-service-master.onrender.com/api/spin/withdraw",
         {
@@ -1131,9 +1150,11 @@ export default function Home() {
           },
         }
       );
-      console.log("response------>", response.data);
       if (response.data === "error") null;
-      else setBalence(parseFloat(response.data));
+      else {
+        setLoading(false);
+        setBalence(parseFloat(response.data));
+      }
     }
   };
   const connectWallet = async () => {
@@ -1223,13 +1244,17 @@ export default function Home() {
     };
   }, []);
   const audioRef = useRef(null);
+  useEffect(() => {
+    // Set volume after the component mounts
+    audioRef.current.volume = 0.4;
+  }, []);
 
   return (
     <div
       className={`absolute h-full w-full md:overflow-hidden ${poppins.variable} font-sans`}
     >
       <iframe className="h-full w-full fixed" src="1.html"></iframe>
-      <audio ref={audioRef} src="/music.mp3" autoPlay={true} loop={true} />
+      <audio ref={audioRef} src="/music.mp3" loop={true}/>
       <div className="flex fixed top-5 left-10 z-10">
         <button
           onClick={() => {
@@ -1537,13 +1562,17 @@ export default function Home() {
                 </div>
                 <div>
                   <button
-                    className="xl:w-[200px] lg:w-[150px] w-[120px] bg-gray-300 rounded-full lg:py-[10px] py-[5px] xl:text-[30px] lg:text-[25px] xl:mr-[280px] lg:mr-[150px] mr-[20px] font-semibold"
+                    className="xl:w-[200px] lg:w-[150px] w-[120px] bg-white rounded-full lg:py-[10px] py-[5px] xl:text-[30px] lg:text-[25px] xl:mr-[280px] lg:mr-[150px] mr-[20px] font-semibold"
                     onClick={() => withdraw()}
                   >
-                    Withdraw
+                    {loading ? (
+                      <>
+                        <img className="h-[43px] mx-auto" src='/loading.gif'/>
+                      </>
+                    ) : (<>Withdraw</>) }
                   </button>
                   <button
-                    className="xl:w-[200px] lg:w-[150px] w-[120px] bg-gray-300 rounded-full lg:py-[10px] py-[5px] xl:text-[30px] lg:text-[25px] font-semibold"
+                    className="xl:w-[200px] lg:w-[150px] w-[120px] bg-white rounded-full lg:py-[10px] py-[5px] xl:text-[30px] lg:text-[25px] font-semibold"
                     onClick={() => transfor()}
                   >
                     Deposit
@@ -1590,7 +1619,7 @@ export default function Home() {
             </button>
             <img src="/windowShop.png" />
             <div className="flex fixed text-[40px] text-white">
-              You have earned ${autoSum.toFixed(2)} in total.
+              You have earned ${oneAutoSum.toFixed(2)} in total.
             </div>
           </div>
         </>
@@ -1613,9 +1642,10 @@ export default function Home() {
                   <div className="inline-flex text-[40px] text-white">
                     You may buy the &nbsp;
                     <img className="w-[50px]" src="/1.png" /> &nbsp; bonus
-                    feature here.
+                    feature here 
                   </div>
                 </div>
+                <div className="text-center text-[40px] text-white mt-[20px]">for x100 bet amount.</div>
                 <div className="flex items-center justify-center mx-auto text-black text-[35px] mt-[100px]">
                   <img className="w-[100px]" src="/1.png" />
                   <button
