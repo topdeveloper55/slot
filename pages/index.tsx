@@ -992,7 +992,9 @@ export default function Home() {
           },
         }
       );
-      setBalence(parseFloat(response.data));
+      console.log("response------>", response.data)
+      if(response.data === "error") null;
+      else setBalence(parseFloat(response.data));
     }
   };
   const connectWallet = async () => {
