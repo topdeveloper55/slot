@@ -98,7 +98,6 @@ export default function Home() {
       "/11.png",
       "/2.png",
       "/3.png",
-      "/9.png",
       "/15.png",
       "/2.png",
       "/3.png",
@@ -111,7 +110,6 @@ export default function Home() {
       "/3.png",
       "/4.png",
       "/2.png",
-      "/9.png",
       "/4.png",
       "/2.png",
       "/3.png",
@@ -126,7 +124,7 @@ export default function Home() {
       "/3.png",
       "/4.png",
       "/2.png",
-    ][Math.floor(Math.random() * 56)];
+    ][Math.floor(Math.random() * 54)];
   };
 
   const getRandomItem2 = () => {
