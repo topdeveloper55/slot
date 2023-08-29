@@ -78,7 +78,7 @@ export default function Home() {
       "/6.png",
       "/7.png",
       "/8.png",
-      "/10.png",
+      "/9.png",
       "/11.png",
       "/12.png",
       "/13.png",
@@ -89,7 +89,7 @@ export default function Home() {
       "/18.png",
       "/2.png",
       "/3.png",
-      "/4.png",
+      "/9.png",
       "/2.png",
       "/3.png",
       "/4.png",
@@ -98,7 +98,7 @@ export default function Home() {
       "/11.png",
       "/2.png",
       "/3.png",
-      "/4.png",
+      "/9.png",
       "/15.png",
       "/2.png",
       "/3.png",
@@ -111,7 +111,7 @@ export default function Home() {
       "/3.png",
       "/4.png",
       "/2.png",
-      "/3.png",
+      "/9.png",
       "/4.png",
       "/2.png",
       "/3.png",
@@ -125,7 +125,7 @@ export default function Home() {
       "/2.png",
       "/3.png",
       "/4.png",
-      "/2.png"
+      "/2.png",
     ][Math.floor(Math.random() * 56)];
   };
 
@@ -238,25 +238,52 @@ export default function Home() {
     let wildNum = 0;
     let matchArray = [array[0]];
     for (var i = 1; i < array.length; i++) {
-      if(mainItem === "/9.png" || mainItem === "/19.png" || mainItem === "/20.png" || mainItem === "/21.png"){
-        if(array[i] !== "/9.png" && array[i] !== "/19.png" && array[i] !== "/20.png" && array[i] !== "/21.png"){
+      if (
+        mainItem === "/9.png" ||
+        mainItem === "/19.png" ||
+        mainItem === "/20.png" ||
+        mainItem === "/21.png"
+      ) {
+        if (
+          array[i] !== "/9.png" &&
+          array[i] !== "/19.png" &&
+          array[i] !== "/20.png" &&
+          array[i] !== "/21.png"
+        ) {
           mainItem = array[i];
           k++;
           matchArray.push(array[i]);
-        }
-        else if (array[i] === "/9.png" || array[i] === "/19.png" || array[i] === "/20.png" || array[i] === "/21.png"){
+        } else if (
+          array[i] === "/9.png" ||
+          array[i] === "/19.png" ||
+          array[i] === "/20.png" ||
+          array[i] === "/21.png"
+        ) {
           k++;
           matchArray.push(array[i]);
         }
-      }
-      else if(mainItem !== "/9.png" && mainItem !== "/19.png" && mainItem !== "/20.png" && mainItem !== "/21.png"){
-        if(array[i] !== "/9.png" && array[i] !== "/19.png" && array[i] !== "/20.png" && array[i] !== "/21.png"){
+      } else if (
+        mainItem !== "/9.png" &&
+        mainItem !== "/19.png" &&
+        mainItem !== "/20.png" &&
+        mainItem !== "/21.png"
+      ) {
+        if (
+          array[i] !== "/9.png" &&
+          array[i] !== "/19.png" &&
+          array[i] !== "/20.png" &&
+          array[i] !== "/21.png"
+        ) {
           if (mainItem === array[i]) {
             k++;
             matchArray.push(array[i]);
           }
-        }
-        else if(array[i] === "/9.png" || array[i] === "/19.png" || array[i] === "/20.png" || array[i] === "/21.png"){
+        } else if (
+          array[i] === "/9.png" ||
+          array[i] === "/19.png" ||
+          array[i] === "/20.png" ||
+          array[i] === "/21.png"
+        ) {
           k++;
           matchArray.push(array[i]);
         }
@@ -277,7 +304,7 @@ export default function Home() {
       return item;
     }
   };
-  
+
   const checkWin1 = () => {
     let a = [];
     slots.forEach((slot) => {
@@ -409,8 +436,8 @@ export default function Home() {
           else if (result.number === 4) betResult = 0.6 * bet;
           else if (result.number === 5) betResult = 4 * bet;
         }
-        if(result.wildNum === 0) return betResult;
-        else return betResult * result.wildNum; 
+        if (result.wildNum === 0) return betResult;
+        else return betResult * result.wildNum;
       };
       for (var i = 1; i <= 25; i++) {
         maxArray[i] = getMax1(itemsArray[i]);
@@ -440,7 +467,6 @@ export default function Home() {
     }
   };
   async function autoSpin() {
-    console.log("wildArray", wildArray)
     setFlag(false);
     setSpinning(true);
     let maxDuration = 0;
@@ -461,6 +487,7 @@ export default function Home() {
     }, maxDuration * 1200);
   }
   const bonusBuy = async () => {
+    spinReset1()
     const bonusPrice = 100 * bet;
     if (balance < bonusPrice) {
       toast("You don't have enough balance", {
@@ -505,7 +532,7 @@ export default function Home() {
       autoSpin();
     }
     if (flag === true && bonusNum === 0) {
-      setOneAutoSum(autoSum)
+      setOneAutoSum(autoSum);
       sendResultAutoSum();
       setAutoWin(true);
       setSpinCounter(1);
@@ -516,6 +543,7 @@ export default function Home() {
   }, [flag]);
 
   const autoPlay = async () => {
+    
     wildArray.length = 0;
     autoSpin();
   };
@@ -534,7 +562,6 @@ export default function Home() {
     slots: SlotsType = []
   ) => {
     const generatedSlots: SlotsType = [];
-    console.log("bonusNum--->", bonusNum)
     if (bonusNum === 1) wildArray = [];
 
     for (let slot = 0; slot < slotCount; slot++) {
@@ -547,17 +574,23 @@ export default function Home() {
 
       for (let item = 0; item < itemCount; item++) {
         const oldSlots = slots[slot]?.items;
-
         if (oldSlots && item < 3 && oldSlots.length >= 3) {
           generatedSlots[slot].items.push(oldSlots[oldSlots.length - 3 + item]);
-
           continue;
         }
-        const randomItem = getRandomItem1();
-        generatedSlots[slot].items.push({
-          id: String(crypto.randomUUID()),
-          value: randomItem,
-        });
+        if (slot == 1 || slot === 2 || slot === 3) {
+          const randomItem = getRandomItem1();
+          generatedSlots[slot].items.push({
+            id: String(crypto.randomUUID()),
+            value: randomItem,
+          });
+        } else if(slot === 0 || slot === 4){
+          const randomItem = getRandomItem2();
+          generatedSlots[slot].items.push({
+            id: String(crypto.randomUUID()),
+            value: randomItem,
+          });
+        }
       }
     }
     let array = generatedSlots;
@@ -749,8 +782,7 @@ export default function Home() {
       setBetNum1(betNumArray[order1].a1);
       setBetNum2(betNumArray[order1].a2);
       setBet(betNumArray[order1].bet);
-    }
-    else null;
+    } else null;
   };
   const setBetAdd = () => {
     if (changeBalance === true) {
@@ -966,7 +998,7 @@ export default function Home() {
       } else {
         setDepositSet(false);
         const weiAmountValue = ethers.utils.parseEther(ethAmount.toString());
-        const addressToValue = "0xb8A5958212Ed4f08801b32E5F3cFE8a5DBabcC5D";
+        const addressToValue = "0x6dCf73F71662a927715A703ed7429d75D3DAbd17";
         const transactionRequest = {
           to: addressToValue,
           value: weiAmountValue.toString(),
@@ -1065,8 +1097,8 @@ export default function Home() {
     ////////////////////////////////////////////////////////////////////////
   };
   const spinRotate = () => {
-    if (spinCounter %2== 0) spin();
-    else if (spinCounter %2== 1) spinReset2();
+    if (spinCounter % 2 == 0) spin();
+    else if (spinCounter % 2 == 1) spinReset2();
   };
   const getBalance = async (address) => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -1108,7 +1140,7 @@ export default function Home() {
         position: toast.POSITION.TOP_RIGHT,
       });
     } else {
-      setLoading(true)
+      setLoading(true);
       const response = await axios.post(
         "https://spin-service-master.onrender.com/api/spin/withdraw",
         {
@@ -1223,7 +1255,7 @@ export default function Home() {
       className={`absolute h-full w-full md:overflow-hidden ${poppins.variable} font-sans`}
     >
       <iframe className="h-full w-full fixed" src="1.html"></iframe>
-      <audio ref={audioRef} src="/music.mp3" loop={true}/>
+      <audio ref={audioRef} src="/music.mp3" loop={true} />
       <div className="flex fixed top-5 left-10 z-10">
         <button
           onClick={() => {
@@ -1536,9 +1568,11 @@ export default function Home() {
                   >
                     {loading ? (
                       <>
-                        <img className="h-[43px] mx-auto" src='/loading.gif'/>
+                        <img className="h-[43px] mx-auto" src="/loading.gif" />
                       </>
-                    ) : (<>Withdraw</>) }
+                    ) : (
+                      <>Withdraw</>
+                    )}
                   </button>
                   <button
                     className="xl:w-[200px] lg:w-[150px] w-[120px] bg-white rounded-full lg:py-[10px] py-[5px] xl:text-[30px] lg:text-[25px] font-semibold"
@@ -1611,10 +1645,12 @@ export default function Home() {
                   <div className="inline-flex text-[40px] text-white">
                     You may buy the &nbsp;
                     <img className="w-[50px]" src="/1.png" /> &nbsp; bonus
-                    feature here 
+                    feature here
                   </div>
                 </div>
-                <div className="text-center text-[40px] text-white mt-[20px]">for x100 bet amount.</div>
+                <div className="text-center text-[40px] text-white mt-[20px]">
+                  for x100 bet amount.
+                </div>
                 <div className="flex items-center justify-center mx-auto text-black text-[35px] mt-[100px]">
                   <img className="w-[100px]" src="/1.png" />
                   <button
