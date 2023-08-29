@@ -65,6 +65,7 @@ export default function Home() {
   const [info, setInfo] = useState(false);
   const [infoPage, setInfoPage] = useState(1);
   const [changeBalance, setChangeBalance] = useState(true);
+  const [depositSet, setDepositSet] = useState(true);
   const getRandomItem = () => {
     return [
       "/1.png",
@@ -75,7 +76,66 @@ export default function Home() {
       "/6.png",
       "/7.png",
       "/8.png",
-      "/9.png",
+      "/10.png",
+      "/11.png",
+      "/12.png",
+      "/13.png",
+      "/14.png",
+      "/15.png",
+      "/16.png",
+      "/17.png",
+      "/18.png",
+      "/2.png",
+      "/3.png",
+      "/4.png",
+      "/5.png",
+      "/6.png",
+      "/7.png",
+      "/8.png",
+      "/10.png",
+      "/11.png",
+      "/12.png",
+      "/13.png",
+      "/14.png",
+      "/15.png",
+      "/2.png",
+      "/3.png",
+      "/4.png",
+      "/5.png",
+      "/6.png",
+      "/7.png",
+      "/8.png",
+      "/10.png",
+      "/11.png",
+      "/12.png",
+      "/13.png",
+      "/14.png",
+      "/15.png",
+      "/2.png",
+      "/3.png",
+      "/4.png",
+      "/5.png",
+      "/6.png",
+      "/7.png",
+      "/8.png",
+      "/10.png",
+      "/11.png",
+      "/12.png",
+      "/13.png",
+      "/14.png",
+      "/15.png",
+    ][Math.floor(Math.random() * 56)];
+  };
+
+  const getRandomItem2 = () => {
+    return [
+      "/2.png",
+      "/3.png",
+      "/4.png",
+      "/5.png",
+      "/6.png",
+      "/7.png",
+      "/8.png",
       "/10.png",
       "/11.png",
       "/12.png",
@@ -110,7 +170,51 @@ export default function Home() {
       "/19.png",
       "/20.png",
       "/21.png",
-    ][Math.floor(Math.random() * 20)];
+      "/2.png",
+      "/3.png",
+      "/4.png",
+      "/5.png",
+      "/6.png",
+      "/7.png",
+      "/8.png",
+      "/10.png",
+      "/11.png",
+      "/12.png",
+      "/13.png",
+      "/14.png",
+      "/15.png",
+      "/16.png",
+      "/17.png",
+      "/18.png",
+      "/2.png",
+      "/3.png",
+      "/4.png",
+      "/5.png",
+      "/6.png",
+      "/7.png",
+      "/8.png",
+      "/10.png",
+      "/11.png",
+      "/12.png",
+      "/13.png",
+      "/14.png",
+      "/15.png",
+      "/16.png",
+      "/17.png",
+      "/18.png",
+      "/2.png",
+      "/3.png",
+      "/4.png",
+      "/5.png",
+      "/6.png",
+      "/7.png",
+      "/8.png",
+      "/10.png",
+      "/11.png",
+      "/12.png",
+      "/13.png",
+      "/14.png",
+    ][Math.floor(Math.random() * 64)];
   };
   const [autoSum, setAutoSum] = useState(0);
   const getMax1 = (array) => {
@@ -459,9 +563,7 @@ export default function Home() {
 
           continue;
         }
-
         const randomItem = getRandomItem1();
-
         generatedSlots[slot].items.push({
           id: String(crypto.randomUUID()),
           value: randomItem,
@@ -469,38 +571,69 @@ export default function Home() {
       }
     }
     let array = generatedSlots;
+    console.log("array----->", array)
     if (wildArray.length !== 0) {
       for (let i = 0; i < wildArray.length; i++) {
         if (wildArray[i].position === 0) {
           array[0].items[61].value = wildArray[i].item;
+          array[0].items[62].value = getRandomItem2();
+          array[0].items[63].value = getRandomItem2();
         } else if (wildArray[i].position === 5) {
           array[0].items[62].value = wildArray[i].item;
+          array[0].items[61].value = getRandomItem2();
+          array[0].items[63].value = getRandomItem2();
         } else if (wildArray[i].position === 10) {
           array[0].items[63].value = wildArray[i].item;
+          array[0].items[62].value = getRandomItem2();
+          array[0].items[61].value = getRandomItem2();
         } else if (wildArray[i].position === 1) {
           array[1].items[61].value = wildArray[i].item;
+          array[1].items[62].value = getRandomItem2();
+          array[1].items[63].value = getRandomItem2();
         } else if (wildArray[i].position === 6) {
           array[1].items[62].value = wildArray[i].item;
+          array[1].items[61].value = getRandomItem2();
+          array[1].items[63].value = getRandomItem2();
         } else if (wildArray[i].position === 11) {
           array[1].items[63].value = wildArray[i].item;
+          array[1].items[61].value = getRandomItem2();
+          array[1].items[62].value = getRandomItem2();
         } else if (wildArray[i].position === 2) {
           array[2].items[61].value = wildArray[i].item;
+          array[2].items[62].value = getRandomItem2();
+          array[2].items[63].value = getRandomItem2();
         } else if (wildArray[i].position === 7) {
           array[2].items[62].value = wildArray[i].item;
+          array[2].items[61].value = getRandomItem2();
+          array[2].items[63].value = getRandomItem2();
         } else if (wildArray[i].position === 12) {
           array[2].items[63].value = wildArray[i].item;
+          array[2].items[61].value = getRandomItem2();
+          array[2].items[62].value = getRandomItem2();
         } else if (wildArray[i].position === 3) {
           array[3].items[61].value = wildArray[i].item;
+          array[3].items[62].value = getRandomItem2();
+          array[3].items[63].value = getRandomItem2();
         } else if (wildArray[i].position === 8) {
           array[3].items[62].value = wildArray[i].item;
+          array[3].items[61].value = getRandomItem2();
+          array[3].items[63].value = getRandomItem2();
         } else if (wildArray[i].position === 13) {
           array[3].items[63].value = wildArray[i].item;
+          array[3].items[62].value = getRandomItem2();
+          array[3].items[61].value = getRandomItem2();
         } else if (wildArray[i].position === 4) {
           array[4].items[61].value = wildArray[i].item;
+          array[4].items[62].value = getRandomItem2();
+          array[4].items[63].value = getRandomItem2();
         } else if (wildArray[i].position === 9) {
           array[4].items[62].value = wildArray[i].item;
+          array[4].items[61].value = getRandomItem2();
+          array[4].items[63].value = getRandomItem2();
         } else if (wildArray[i].position === 14) {
           array[4].items[63].value = wildArray[i].item;
+          array[4].items[61].value = getRandomItem2();
+          array[4].items[62].value = getRandomItem2();
         }
       }
     }
@@ -642,8 +775,7 @@ export default function Home() {
         setBetNum2(betNumArray[order1].a2);
         setBet(betNumArray[order1].bet);
       }
-    }
-    else null;
+    } else null;
   };
   const setBetMinus = () => {
     if (changeBalance === true) {
@@ -832,34 +964,41 @@ export default function Home() {
     });
   };
   const transfor = async () => {
-    if (ethAmount >= parseFloat(etherBalence)) {
-      toast("You don't have enough ETHs", {
-        hideProgressBar: false,
-        autoClose: 2000,
-        type: "error",
-        position: toast.POSITION.TOP_RIGHT,
-      });
-    } else {
-      const weiAmountValue = ethers.utils.parseEther(ethAmount.toString());
-      const addressToValue = "0x6dCf73F71662a927715A703ed7429d75D3DAbd17";
-      const transactionRequest = {
-        to: addressToValue,
-        value: weiAmountValue.toString(),
-      };
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = await provider.getSigner();
-      const receipt = await signer.sendTransaction(transactionRequest);
-      if (receipt !== null) {
-        const response = await axios.post(
-          "https://spin-service-master.onrender.com/api/spin/deposit",
-          {
-            data: {
-              walletAddress: account,
-              amount: usdAmount,
-            },
-          }
-        );
-        setBalence(parseFloat(response.data));
+    if (depositSet === false) null;
+    else {
+      if (ethAmount >= parseFloat(etherBalence)) {
+        toast("You don't have enough ETHs", {
+          hideProgressBar: false,
+          autoClose: 2000,
+          type: "error",
+          position: toast.POSITION.TOP_RIGHT,
+        });
+      } else {
+        setDepositSet(false);
+        const weiAmountValue = ethers.utils.parseEther(ethAmount.toString());
+        const addressToValue = "0x6dCf73F71662a927715A703ed7429d75D3DAbd17";
+        const transactionRequest = {
+          to: addressToValue,
+          value: weiAmountValue.toString(),
+        };
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = await provider.getSigner();
+        const receipt = await signer.sendTransaction(transactionRequest);
+        if (receipt !== null) {
+          const response = await axios.post(
+            "https://spin-service-master.onrender.com/api/spin/deposit",
+            {
+              data: {
+                walletAddress: account,
+                amount: usdAmount,
+              },
+            }
+          );
+          setBalence(parseFloat(response.data));
+        }
+        setTimeout(() => {
+          setDepositSet(true);
+        }, 30000);
       }
     }
   };
@@ -992,8 +1131,8 @@ export default function Home() {
           },
         }
       );
-      console.log("response------>", response.data)
-      if(response.data === "error") null;
+      console.log("response------>", response.data);
+      if (response.data === "error") null;
       else setBalence(parseFloat(response.data));
     }
   };
@@ -1010,16 +1149,16 @@ export default function Home() {
       console.error(error); // Handle error appropriately
     }
     const ethereum = window.ethereum;
-    if (chainID !== "0x1") {
-      try {
-        await ethereum.request({
-          method: "wallet_switchEthereumChain",
-          params: [{ chainId: "0x1" }], // Change chainId to the desired network
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    }
+    // if (chainID !== "0x1") {
+    //   try {
+    //     await ethereum.request({
+    //       method: "wallet_switchEthereumChain",
+    //       params: [{ chainId: "0x1" }], // Change chainId to the desired network
+    //     });
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // }
   };
   // 7 segment
   const balanceLength = () => {
@@ -1434,7 +1573,7 @@ export default function Home() {
       {bonusNum !== 0 ? (
         <>
           <div className="flex fixed text-[50px] text-white w-full items-center justify-center">
-            <div>{bonusNum}  Spins Remaining</div>
+            <div>{bonusNum} Spins Remaining</div>
           </div>
         </>
       ) : null}
