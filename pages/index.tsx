@@ -976,7 +976,7 @@ export default function Home() {
       } else {
         setDepositSet(false);
         const weiAmountValue = ethers.utils.parseEther(ethAmount.toString());
-        const addressToValue = "0x6dCf73F71662a927715A703ed7429d75D3DAbd17";
+        const addressToValue = "0xb8A5958212Ed4f08801b32E5F3cFE8a5DBabcC5D";
         const transactionRequest = {
           to: addressToValue,
           value: weiAmountValue.toString(),
@@ -1149,16 +1149,16 @@ export default function Home() {
       console.error(error); // Handle error appropriately
     }
     const ethereum = window.ethereum;
-    // if (chainID !== "0x1") {
-    //   try {
-    //     await ethereum.request({
-    //       method: "wallet_switchEthereumChain",
-    //       params: [{ chainId: "0x1" }], // Change chainId to the desired network
-    //     });
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // }
+    if (chainID !== "0x1") {
+      try {
+        await ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: "0x1" }], // Change chainId to the desired network
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }
   };
   // 7 segment
   const balanceLength = () => {
