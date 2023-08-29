@@ -235,68 +235,39 @@ export default function Home() {
   const getMax1 = (array) => {
     let mainItem = array[0];
     let k = 1;
-    let wildNum = 1;
+    let wildNum = 0;
     let matchArray = [array[0]];
     for (var i = 1; i < array.length; i++) {
-      if (
-        (mainItem === "/9.png" ||
-          mainItem === "/19.png" ||
-          mainItem === "/20.png" ||
-          mainItem === "/21.png") &&
-        (array[i] !== "/9.png" ||
-          array[i] !== "/19.png" ||
-          array[i] !== "/20.png" ||
-          array[i] !== "/21.png")
-      ) {
-        mainItem = array[i];
-        k++;
-        matchArray.push(array[i]);
-      } else if (
-        (mainItem !== "/9.png" ||
-          mainItem !== "/19.png" ||
-          mainItem !== "/20.png" ||
-          mainItem !== "/21.png") &&
-        (array[i] !== "/9.png" ||
-          array[i] !== "/19.png" ||
-          array[i] !== "/20.png" ||
-          array[i] !== "/21.png")
-      ) {
-        if (mainItem === array[i]) {
+      if(mainItem === "/9.png" || mainItem === "/19.png" || mainItem === "/20.png" || mainItem === "/21.png"){
+        if(array[i] !== "/9.png" && array[i] !== "/19.png" && array[i] !== "/20.png" && array[i] !== "/21.png"){
+          mainItem = array[i];
           k++;
           matchArray.push(array[i]);
-        } else break;
-      } else if (
-        (mainItem === "/9.png" ||
-          mainItem === "/19.png" ||
-          mainItem === "/20.png" ||
-          mainItem === "/21.png") &&
-        (array[i] === "/9.png" ||
-          array[i] === "/19.png" ||
-          array[i] === "/20.png" ||
-          array[i] === "/21.png")
-      ) {
-        k++;
-        matchArray.push(array[i]);
-      } else if (
-        (mainItem !== "/9.png" ||
-          mainItem !== "/19.png" ||
-          mainItem !== "/20.png" ||
-          mainItem !== "/21.png") &&
-        (array[i] === "/9.png" ||
-          array[i] === "/19.png" ||
-          array[i] === "/20.png" ||
-          array[i] === "/21.png")
-      ) {
-        k++;
-        matchArray.push(array[i]);
+        }
+        else if (array[i] === "/9.png" || array[i] === "/19.png" || array[i] === "/20.png" || array[i] === "/21.png"){
+          k++;
+          matchArray.push(array[i]);
+        }
+      }
+      else if(mainItem !== "/9.png" && mainItem !== "/19.png" && mainItem !== "/20.png" && mainItem !== "/21.png"){
+        if(array[i] !== "/9.png" && array[i] !== "/19.png" && array[i] !== "/20.png" && array[i] !== "/21.png"){
+          if (mainItem === array[i]) {
+            k++;
+            matchArray.push(array[i]);
+          }
+        }
+        else if(array[i] === "/9.png" || array[i] === "/19.png" || array[i] === "/20.png" || array[i] === "/21.png"){
+          k++;
+          matchArray.push(array[i]);
+        }
       }
     }
     if (k < 3) return 0;
     else if (k >= 3) {
       for (var i = 0; i <= matchArray.length; i++) {
-        if (matchArray[i] === "/19.png") wildNum = wildNum * 2;
-        else if (matchArray[i] === "/20.png") wildNum = wildNum * 3;
-        else if (matchArray[i] === "/21.png") wildNum = wildNum * 4;
+        if (matchArray[i] === "/19.png") wildNum = wildNum + 2;
+        else if (matchArray[i] === "/20.png") wildNum = wildNum + 3;
+        else if (matchArray[i] === "/21.png") wildNum = wildNum + 4;
       }
       const item = {
         item: mainItem,
@@ -438,7 +409,8 @@ export default function Home() {
           else if (result.number === 4) betResult = 0.6 * bet;
           else if (result.number === 5) betResult = 4 * bet;
         }
-        return betResult * result.wildNum;
+        if(result.wildNum === 0) return betResult;
+        else return betResult * result.wildNum; 
       };
       for (var i = 1; i <= 25; i++) {
         maxArray[i] = getMax1(itemsArray[i]);
@@ -464,11 +436,11 @@ export default function Home() {
         }
       }
       setTotal(sum);
-      console.log("sum---->", sum);
       setAutoSum(autoSum + sum);
     }
   };
   async function autoSpin() {
+    console.log("wildArray", wildArray)
     setFlag(false);
     setSpinning(true);
     let maxDuration = 0;
@@ -507,7 +479,6 @@ export default function Home() {
           },
         }
       );
-      console.log("---------->", response.data);
       if (response.data) {
         setAutoPlay(true);
         setBalence(parseFloat(response.data.balance));
@@ -517,8 +488,6 @@ export default function Home() {
   };
 
   const sendResultAutoSum = async () => {
-    console.log("autosum---->", autoSum)
-    console.log("oneAutoSum---->", oneAutoSum)
     const response = await axios.post(
       "https://spin-service-master.onrender.com/api/spin/win",
       {
@@ -536,7 +505,6 @@ export default function Home() {
       autoSpin();
     }
     if (flag === true && bonusNum === 0) {
-      console.log("autoSum", autoSum);
       setOneAutoSum(autoSum)
       sendResultAutoSum();
       setAutoWin(true);
@@ -544,11 +512,11 @@ export default function Home() {
       setSpinning(false);
       setChangeBalance(true);
       setAutoSum(0);
-      wildArray = [];
     }
   }, [flag]);
 
   const autoPlay = async () => {
+    wildArray.length = 0;
     autoSpin();
   };
   const spinReset1 = () => {
@@ -566,6 +534,8 @@ export default function Home() {
     slots: SlotsType = []
   ) => {
     const generatedSlots: SlotsType = [];
+    console.log("bonusNum--->", bonusNum)
+    if (bonusNum === 1) wildArray = [];
 
     for (let slot = 0; slot < slotCount; slot++) {
       generatedSlots.push({
@@ -591,7 +561,6 @@ export default function Home() {
       }
     }
     let array = generatedSlots;
-    console.log("array----->", array)
     if (wildArray.length !== 0) {
       for (let i = 0; i < wildArray.length; i++) {
         if (wildArray[i].position === 0) {
@@ -690,7 +659,6 @@ export default function Home() {
         });
       }
     }
-    console.log(generatedSlots);
 
     setSlots(generatedSlots);
   };
@@ -747,7 +715,6 @@ export default function Home() {
   let addBalance = 0;
   const [betNum1, setBetNum1] = useState(0);
   const [betNum2, setBetNum2] = useState(4);
-  const [order, setOrder] = useState(0);
   const betNumArray = [
     {
       a1: 0,
@@ -777,10 +744,13 @@ export default function Home() {
   ];
 
   const setMaxBet = () => {
-    order1 = 4;
-    setBetNum1(betNumArray[order1].a1);
-    setBetNum2(betNumArray[order1].a2);
-    setBet(betNumArray[order1].bet);
+    if (changeBalance === true) {
+      order1 = 4;
+      setBetNum1(betNumArray[order1].a1);
+      setBetNum2(betNumArray[order1].a2);
+      setBet(betNumArray[order1].bet);
+    }
+    else null;
   };
   const setBetAdd = () => {
     if (changeBalance === true) {
@@ -1095,7 +1065,6 @@ export default function Home() {
     ////////////////////////////////////////////////////////////////////////
   };
   const spinRotate = () => {
-    console.log("spincounter-------->", spinCounter);
     if (spinCounter %2== 0) spin();
     else if (spinCounter %2== 1) spinReset2();
   };
