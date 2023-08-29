@@ -1434,7 +1434,7 @@ export default function Home() {
       {bonusNum !== 0 ? (
         <>
           <div className="flex fixed text-[50px] text-white w-full items-center justify-center">
-            <div>Remain Times: {bonusNum}</div>
+            <div>{bonusNum}  Spins Remaining</div>
           </div>
         </>
       ) : null}
