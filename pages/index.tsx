@@ -110,21 +110,7 @@ export default function Home() {
       "/3.png",
       "/4.png",
       "/2.png",
-      "/4.png",
-      "/2.png",
-      "/3.png",
-      "/4.png",
-      "/2.png",
-      "/3.png",
-      "/4.png",
-      "/2.png",
-      "/3.png",
-      "/4.png",
-      "/2.png",
-      "/3.png",
-      "/4.png",
-      "/2.png",
-    ][Math.floor(Math.random() * 54)];
+    ][Math.floor(Math.random() * 40)];
   };
 
   const getRandomItem2 = () => {
