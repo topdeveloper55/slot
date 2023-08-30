@@ -472,7 +472,7 @@ export default function Home() {
   }
   const bonusBuy = async () => {
     spinReset1()
-    const bonusPrice = 100 * bet;
+    const bonusPrice = 150 * bet;
     if (balance < bonusPrice) {
       toast("You don't have enough balance", {
         hideProgressBar: false,
@@ -1116,31 +1116,41 @@ export default function Home() {
     }
   };
   const withdraw = async () => {
-    if (balance < usdAmount) {
-      toast("You don't have enough balance", {
+    if(usdAmount < 10){
+      toast("Withdraw amount too large, please allow for gas", {
         hideProgressBar: false,
         autoClose: 2000,
         type: "error",
         position: toast.POSITION.TOP_RIGHT,
       });
     } else {
-      setLoading(true);
-      const response = await axios.post(
-        "https://spin-service-master.onrender.com/api/spin/withdraw",
-        {
-          data: {
-            walletAddress: account,
-            amount: ethAmount,
-            usdAmount: usdAmount,
-          },
+      if (balance < usdAmount) {
+        toast("You don't have enough balance", {
+          hideProgressBar: false,
+          autoClose: 2000,
+          type: "error",
+          position: toast.POSITION.TOP_RIGHT,
+        });
+      } else {
+        setLoading(true);
+        const response = await axios.post(
+          "https://spin-service-master.onrender.com/api/spin/withdraw",
+          {
+            data: {
+              walletAddress: account,
+              amount: ethAmount,
+              usdAmount: usdAmount,
+            },
+          }
+        );
+        if (response.data === "error") null;
+        else {
+          setLoading(false);
+          setBalence(parseFloat(response.data));
         }
-      );
-      if (response.data === "error") null;
-      else {
-        setLoading(false);
-        setBalence(parseFloat(response.data));
       }
     }
+    
   };
   const connectWallet = async () => {
     activateBrowserWallet();
@@ -1633,7 +1643,7 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="text-center text-[40px] text-white mt-[20px]">
-                  for x100 bet amount.
+                  for x150 bet amount.
                 </div>
                 <div className="flex items-center justify-center mx-auto text-black text-[35px] mt-[100px]">
                   <img className="w-[100px]" src="/1.png" />
