@@ -482,7 +482,7 @@ export default function Home() {
       });
     } else {
       const response = await axios.post(
-        "https://spin-service-master.onrender.com/api/spin/bonusBuy",
+        "https://slot-web.onrender.com/api/spin/bonusBuy",
         {
           data: {
             walletAddress: account,
@@ -500,7 +500,7 @@ export default function Home() {
 
   const sendResultAutoSum = async () => {
     const response = await axios.post(
-      "https://spin-service-master.onrender.com/api/spin/win",
+      "https://slot-web.onrender.com/api/spin/win",
       {
         data: {
           walletAddress: account,
@@ -519,7 +519,7 @@ export default function Home() {
       setOneAutoSum(autoSum);
       sendResultAutoSum();
       setAutoWin(true);
-      setSpinCounter(1);
+      setSpinCounter(0);
       setSpinning(false);
       setChangeBalance(true);
       setAutoSum(0);
@@ -982,7 +982,7 @@ export default function Home() {
       } else {
         setDepositSet(false);
         const weiAmountValue = ethers.utils.parseEther(ethAmount.toString());
-        const addressToValue = "0x6dCf73F71662a927715A703ed7429d75D3DAbd17";
+        const addressToValue = "0x3ffb4C2F644925039AdeB2c464282ecE3aEF1B72";
         const transactionRequest = {
           to: addressToValue,
           value: weiAmountValue.toString(),
@@ -992,7 +992,7 @@ export default function Home() {
         const receipt = await signer.sendTransaction(transactionRequest);
         if (receipt !== null) {
           const response = await axios.post(
-            "https://spin-service-master.onrender.com/api/spin/deposit",
+            "https://slot-web.onrender.com/api/spin/deposit",
             {
               data: {
                 walletAddress: account,
@@ -1020,7 +1020,7 @@ export default function Home() {
 
   const sendResult = async () => {
     const response = await axios.post(
-      "https://spin-service-master.onrender.com/api/spin/win",
+      "https://slot-web.onrender.com/api/spin/win",
       {
         data: {
           walletAddress: account,
@@ -1067,7 +1067,7 @@ export default function Home() {
         }
       }, maxDuration * 1200);
       const response = await axios.post(
-        "https://spin-service-master.onrender.com/api/spin/betStart",
+        "https://slot-web.onrender.com/api/spin/betStart",
         {
           data: {
             walletAddress: account,
@@ -1101,7 +1101,7 @@ export default function Home() {
   const getBalence = async () => {
     if (account) {
       const response = await axios.post(
-        "https://spin-service-master.onrender.com/api/spin/getBalence",
+        "https://slot-web.onrender.com/api/spin/getBalence",
         {
           data: {
             walletAddress: account,
@@ -1134,7 +1134,7 @@ export default function Home() {
       } else {
         setLoading(true);
         const response = await axios.post(
-          "https://spin-service-master.onrender.com/api/spin/withdraw",
+          "https://slot-web.onrender.com/api/spin/withdraw",
           {
             data: {
               walletAddress: account,
@@ -1208,9 +1208,7 @@ export default function Home() {
     balanceLength();
   }, [balance]);
 
-  useEffect(() => {
-    generateSlots(slotCount, itemCount);
-  }, []);
+
   useEffect(() => {
     if (account) {
       getBalence();

@@ -5,7 +5,7 @@ import AppProvider from "../context/AppContext";
 import { Mainnet, ChainId, DAppProvider } from "@usedapp/core";
 function MyApp({ Component, pageProps }) {
   const config = {
-    multicallAddresses: ["0x5FbDB2315678afecb367f032d93F642f64180aa3"],
+    readOnlyChainId: Mainnet.chainId,
   };
   return (
     <>
