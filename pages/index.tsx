@@ -482,7 +482,7 @@ export default function Home() {
       });
     } else {
       const response = await axios.post(
-        "https://slot-web.onrender.com/api/spin/bonusBuy",
+        "https://slot-server.onrender.com/api/spin/bonusBuy",
         {
           data: {
             walletAddress: account,
@@ -500,7 +500,7 @@ export default function Home() {
 
   const sendResultAutoSum = async () => {
     const response = await axios.post(
-      "https://slot-web.onrender.com/api/spin/win",
+      "https://slot-server.onrender.com/api/spin/win",
       {
         data: {
           walletAddress: account,
@@ -992,7 +992,7 @@ export default function Home() {
         const receipt = await signer.sendTransaction(transactionRequest);
         if (receipt !== null) {
           const response = await axios.post(
-            "https://slot-web.onrender.com/api/spin/deposit",
+            "https://slot-server.onrender.com/api/spin/deposit",
             {
               data: {
                 walletAddress: account,
@@ -1020,7 +1020,7 @@ export default function Home() {
 
   const sendResult = async () => {
     const response = await axios.post(
-      "https://slot-web.onrender.com/api/spin/win",
+      "https://slot-server.onrender.com/api/spin/win",
       {
         data: {
           walletAddress: account,
@@ -1067,7 +1067,7 @@ export default function Home() {
         }
       }, maxDuration * 1200);
       const response = await axios.post(
-        "https://slot-web.onrender.com/api/spin/betStart",
+        "https://slot-server.onrender.com/api/spin/betStart",
         {
           data: {
             walletAddress: account,
@@ -1101,7 +1101,7 @@ export default function Home() {
   const getBalence = async () => {
     if (account) {
       const response = await axios.post(
-        "https://slot-web.onrender.com/api/spin/getBalence",
+        "https://slot-server.onrender.com/api/spin/getBalence",
         {
           data: {
             walletAddress: account,
@@ -1134,7 +1134,7 @@ export default function Home() {
       } else {
         setLoading(true);
         const response = await axios.post(
-          "https://slot-web.onrender.com/api/spin/withdraw",
+          "https://slot-server.onrender.com/api/spin/withdraw",
           {
             data: {
               walletAddress: account,
